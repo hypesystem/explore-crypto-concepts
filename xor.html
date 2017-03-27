@@ -1,0 +1,91 @@
+---
+permalink: xor/
+---
+<div class="infobox">
+    <p>
+        <strong>xor ⊕</strong> is short for <em>exclusive or</em> and is a <a href="/binary-operators/">binary operator</a>.
+        It works by looking at binary strings of the same length, a and b.
+        For each binary digit (each number, 0 or 1, in the string) it sets the resulting binary digit to 0 if the digits are the same, and 1 if they differ.
+    </p>
+    <p>
+        Formally, we can describe the algorithm as such:
+        ...
+    </p>
+    <p>
+        In practice there are much faster implementations than naïvely following the formal algorithm.
+    </p>
+    <p>
+        It is interesting to note that, like multiplication, xor is commutative and associative.
+        This means that it doesn't matter which variable is before or after xor, so a ⊕ b is the same as b ⊕ a.
+        It also means that it does not matter which xor is resolved first, if there are several in a row, so (a ⊕ b) ⊕ c is the same as a ⊕ (b ⊕ c).
+    </p>
+    <p>
+        If you look at the algorithm it should also be clear that any variable xor'ed with itself equals 0<sup>n</sup> (that is, a n-length string of 0s), where n is the length of the input binary strings: a ⊕ a = 0<sup>|a|</sup>.
+    <p>
+</div>
+<div class="playground">
+    Number of xors: <input type="number" value="1" class="xor-counter">
+    <div class="xor-calculator">
+
+    </div>
+    Result = <span class="xor-calculator-result"></span><br>
+    <button class="xor-calculator-submit">Calculate!</button>
+</div>
+
+<script>
+function isBinaryString(str) {
+    return !/[^01]/.exec(str);
+}
+
+function xor(a,b) {
+    if(!isBinaryString(a) || !isBinaryString(b)) {
+        throw new Error("one of the strings are not binary");
+    }
+    if(a.length != b.length) {
+        throw new Error("the two strings are not equal in length");
+    }
+    console.log("xoring", a, b);
+    var result = [];
+    for(var i = 0; i < a.length; i++) {
+        if(a[i] == b[i]) result.push(0);
+        else result.push(1);
+    }
+    return result.join("");
+}
+
+//playground
+var xorCalculator = document.querySelector(".xor-calculator");
+var xorCounter = document.querySelector(".xor-counter");
+var xorCalculatorButton = document.querySelector(".xor-calculator-submit");
+var xorCalculatorResult = document.querySelector(".xor-calculator-result");
+
+function buildCalculator() {
+    var count = xorCounter.value;
+    if(count < 1) {
+        throw new Error("cannot create a calculator with less than 1 operation");
+    }
+    var result = ['<input type="text">'];
+    for(var i = 0; i < count; i++) {
+        result.push(' ⊕ <input type="text">');
+    }
+    xorCalculator.innerHTML = result.join("");
+}
+
+function getCalculatorInputs() {
+    return Array.prototype.map.call(document.querySelectorAll(".xor-calculator input"), function(x) {
+        return x.value;
+    });
+}
+
+function calculate() {
+    var inputs = getCalculatorInputs();
+    xorCalculatorResult.innerHTML = inputs.reduce(function(acc, x) {
+        return xor(acc, x);
+    }, Array(inputs[0].length + 1).join("0"));
+}
+
+xorCounter.addEventListener("change", buildCalculator);
+xorCalculatorButton.addEventListener("click", calculate);
+
+buildCalculator();
+</script>
